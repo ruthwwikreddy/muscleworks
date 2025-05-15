@@ -58,15 +58,16 @@ const TransformSection = () => {
             </Button>
           </div>
           
-          <div className="relative h-[500px] rounded-lg overflow-hidden shadow-2xl">
+          <div className="relative h-[500px] rounded-lg overflow-hidden shadow-2xl bg-gray-900 flex items-center justify-center">
             {/* Image Carousel */}
             {transformationImages.map((image, index) => (
-              <img
-                key={index}
-                src={image}
-                alt={`Transformation ${index + 1}`}
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${currentImageIndex === index ? 'opacity-100' : 'opacity-0'}`}
-              />
+              <div key={index} className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${currentImageIndex === index ? 'opacity-100' : 'opacity-0'}`}>
+                <img
+                  src={image}
+                  alt={`Transformation ${index + 1}`}
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
             ))}
             
             {/* Carousel indicators */}
