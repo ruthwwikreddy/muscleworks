@@ -65,7 +65,6 @@ const ContactSection = () => {
                 <div>
                   <h3 className="font-bold text-lg mb-2">Contact</h3>
                   <p className="text-gray-600">+91-9281151518</p>
-                  <p className="text-gray-600">+91-9100000000</p>
                 </div>
               </div>
             </div>
@@ -77,8 +76,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h3 className="font-bold text-lg mb-2">Email Us</h3>
-                  <p className="text-gray-600">admin@mwthefitnesscoliseum.in</p>
-                  <p className="text-gray-600">info@mwthefitnesscoliseum.in</p>
+                  <p className="text-gray-600">muscleworksthefitnesscoliseum@gmail.com</p>
                 </div>
               </div>
             </div>
