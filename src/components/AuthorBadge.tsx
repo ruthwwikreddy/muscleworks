@@ -14,7 +14,7 @@ const AuthorBadge = () => {
         {/* Background blurred image */}
         <div className="absolute inset-0 w-full h-full">
           <img
-            src="/assets/images/Gym (1).png"
+            src="/images/Gym (1).png"
             alt=""
             className="w-full h-full object-cover"
           />

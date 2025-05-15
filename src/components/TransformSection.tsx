@@ -8,11 +8,11 @@ const TransformSection = () => {
   // Note: Since the transformation folder is empty, we're using placeholder images
   // These should be replaced with actual transformation images once they're added
   const transformationImages = [
-    "https://ruthwikreddy.xyz/muscleworks/assets/images/Gym (1).png",
-    "https://ruthwikreddy.xyz/muscleworks/assets/images/Gym (3).png",
-    "https://ruthwikreddy.xyz/muscleworks/assets/images/Gym (4).png",
-    "https://ruthwikreddy.xyz/muscleworks/assets/images/Gym (7).png",
-    "https://ruthwikreddy.xyz/muscleworks/assets/images/Gym (8).png",
+    "/images/Gym (1).png",
+    "/images/Gym (3).png",
+    "/images/Gym (4).png",
+    "/images/Gym (7).png",
+    "/images/Gym (8).png",
   ];
 
   // Image carousel effect - change image every second

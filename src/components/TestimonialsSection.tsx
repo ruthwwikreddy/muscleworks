@@ -5,27 +5,27 @@ const testimonials = [
   {
     name: "Vijay Kumar",
     quote: "If you're serious about fitness and looking for a top-notch gym in Jubilee Hills, Muscle Works Gym is an excellent choice. The facility is clean, well-equipped, and designed to cater to all types of fitness enthusiasts, from beginners to athletes. The team of certified trainers provides personalized attention and tailored workout plans, ensuring you're on the right track. The management is professional, approachable, and ensures the gym is well-maintained with regularly updated equipment.",
-    image: "/assets/images/Gym (2).png",
+    image: "/images/Gym (2).png",
   },
   {
     name: "Ashfaq Ahmad",
     quote: "This gym is truly exceptional—it feels like you've stepped out of India and into a world-class fitness center. The energetic vibe, state-of-the-art equipment, and supportive trainers make every workout a fantastic experience. The convenient location is just the cherry on top.",
-    image: "/assets/images/Gym (2).png",
+    image: "/images/Gym (2).png",
   },
   {
     name: "Sai Akhil",
     quote: "Muscle Works stands out as a premier gym in Hyderabad, offering exceptional workout experiences. The sophisticated equipment is both effective and user-friendly, and the inspiring atmosphere motivates me to achieve my fitness milestones. The staff is approachable and always ready to provide guidance and advice. I highly recommend this outstanding fitness facility.",
-    image: "/assets/images/Gym (2).png",
+    image: "/images/Gym (2).png",
   },
   {
     name: "Sadashiv Simha",
     quote: "The best coaches and best training are given to each individual. Fully branded equipment, premium facilities, and a prime location at very nominal rates. The coach doesn't compromise when it comes to training. A place where we go from \"fit less\" to fitness!",
-    image: "/assets/images/Gym (2).png",
+    image: "/images/Gym (2).png",
   },
   {
     name: "G.S. Arora",
     quote: "Finding a gym that offers not only the latest in fitness equipment but also an inspiring atmosphere can be a game-changer. Muscle Works Gym combines top-notch hygiene, a vibrant culture, and friendly staff to create an exceptional workout environment. This gym truly sets a high standard for fitness centers in Hyderabad and Secunderabad.",
-    image: "/assets/images/Gym (2).png",
+    image: "/images/Gym (2).png",
   },
 ];
 

@@ -8,7 +8,7 @@ const Hero = () => {
       {/* Background with image */}
       <div className="absolute inset-0">
         <img
-          src="/assets/images/Gym (1).png"
+          src="/images/Gym (1).png"
           alt="Fitness background"
           className="w-full h-full object-cover"
         />

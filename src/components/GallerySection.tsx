@@ -2,11 +2,11 @@ import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const images = [
-  "/assets/images/Gym (1).png",
-  "/assets/images/Gym (3).png",
-  "/assets/images/Gym (4).png",
-  "/assets/images/Gym (7).png",
-  "/assets/images/Gym (8).png",
+  "/images/Gym (1).png",
+  "/images/Gym (3).png",
+  "/images/Gym (4).png",
+  "/images/Gym (7).png",
+  "/images/Gym (8).png",
 ];
 
 const GallerySection = () => {
