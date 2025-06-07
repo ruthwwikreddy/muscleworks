@@ -37,70 +37,11 @@ const VideoItem = React.memo(({
   openFullscreen,
   totalVideos
 }: VideoItemProps) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  
-  // Handle video play
-  const handlePlay = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    const videoEl = videoRefs.current?.[index];
-    if (videoEl) {
-      videoEl.play()
-        .then(() => setIsPlaying(true))
-        .catch(console.error);
-    }
-  }, [index, videoRefs]);
-  
-  // Handle video pause
-  const handlePause = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    const videoEl = videoRefs.current?.[index];
-    if (videoEl) {
-      videoEl.pause();
-      setIsPlaying(false);
-    }
-  }, [index, videoRefs]);
-  
-  // Handle video click to open fullscreen
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    openFullscreen(video, index % (totalVideos / 2));
-  }, [index, openFullscreen, totalVideos, video]);
-  
-  // Handle video loaded data
-  const handleVideoLoadedData = useCallback((e: React.SyntheticEvent<HTMLVideoElement>) => {
+  const handleVideoLoadedData = (e: React.SyntheticEvent<HTMLVideoElement>) => {
     const videoEl = e.target as HTMLVideoElement;
     videoDurations[video] = videoEl.duration || 0;
-  }, [video, videoDurations]);
-  
-  // Auto-play video when mounted
-  useEffect(() => {
-    const currentVideoRef = videoRef.current;
-    if (currentVideoRef && videoRefs) {
-      videoRefs.current[index] = currentVideoRef;
-      
-      const playVideo = async () => {
-        try {
-          await currentVideoRef.play();
-          setIsPlaying(true);
-        } catch (error) {
-          console.error('Error playing video:', error);
-          setIsPlaying(false);
-        }
-      };
-      
-      playVideo();
-      
-      return () => {
-        // Clean up on unmount
-        if (videoRefs.current) {
-          videoRefs.current[index] = null;
-        }
-      };
-    }
-  }, [index, videoRefs]);
-  
-  // Format time in seconds to MM:SS format
+  };
+
   const formatTime = (time: number): string => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
@@ -110,50 +51,27 @@ const VideoItem = React.memo(({
   return (
     <div
       key={`${video}-${index}`}
-      className="group relative flex-shrink-0 w-28 sm:w-36 md:w-40 lg:w-48 mx-2 cursor-pointer overflow-hidden rounded-xl bg-gray-900 transition-all duration-300 hover:scale-105"
-      style={{
-        aspectRatio: '9/16',
-        height: '280px',
-        maxHeight: '400px',
-        minHeight: '200px'
-      }}
+      className="group relative aspect-video flex-shrink-0 w-72 md:w-80 lg:w-96 mx-2 cursor-pointer overflow-hidden rounded-xl bg-gray-900 transition-all duration-300 hover:scale-105"
       onMouseEnter={() => handleVideoHover(index, true)}
       onMouseLeave={() => handleVideoHover(index, false)}
-      onClick={handleClick}
+      onClick={() => openFullscreen(video, index % (totalVideos / 2))}
     >
       <video
-        ref={videoRef}
+        ref={el => videoRefs.current[index] = el}
         className="h-full w-full object-cover"
         src={video}
         muted
         loop
         playsInline
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
         onLoadedData={handleVideoLoadedData}
       />
       
       {/* Hover Overlay */}
-      <div 
-        className={`absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 ${
-          isHovered ? 'opacity-100' : 'opacity-0'
-        }`}
-        onClick={handleClick}
-      >
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white bg-opacity-20 transform transition-transform group-hover:scale-110">
-            {isPlaying ? (
-              <Pause className="h-8 w-8 text-white" onClick={handlePause} />
-            ) : (
-              <Play className="h-8 w-8 text-white" onClick={handlePlay} />
-            )}
-          </div>
-          <button 
-            className="px-4 py-2 bg-white bg-opacity-20 text-white rounded-full text-sm font-medium hover:bg-opacity-30 transition-all"
-            onClick={handleClick}
-          >
-            Fullscreen
-          </button>
+      <div className={`absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 ${
+        isHovered ? 'opacity-100' : 'opacity-0'
+      }`}>
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white bg-opacity-20 transform transition-transform group-hover:scale-110">
+          <Play className="h-8 w-8 text-white" />
         </div>
       </div>
       
@@ -208,47 +126,16 @@ const VideoSection: React.FC = () => {
       setIsHovered(index);
       const video = videoRefs.current[index];
       if (video) {
-        video.pause();
+        video.play().catch(console.error);
       }
     } else {
       setIsHovered(null);
       const video = videoRefs.current[index];
       if (video) {
-        video.play().catch(console.error);
+        video.pause();
+        video.currentTime = 0;
       }
     }
-  }, []);
-  
-  // Auto-play all videos on mount and when scrolling
-  useEffect(() => {
-    const playAllVideos = () => {
-      videoRefs.current.forEach(video => {
-        if (video && video.paused) {
-          video.play().catch(console.error);
-        }
-      });
-    };
-    
-    // Initial play
-    const timer = setTimeout(playAllVideos, 1000);
-    
-    // Play videos when scroll container is in view
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          playAllVideos();
-        }
-      });
-    }, { threshold: 0.1 });
-    
-    if (scrollContainerRef.current) {
-      observer.observe(scrollContainerRef.current);
-    }
-    
-    return () => {
-      clearTimeout(timer);
-      observer.disconnect();
-    };
   }, []);
 
   // Toggle play/pause
@@ -331,86 +218,42 @@ const VideoSection: React.FC = () => {
     setIsScrolling(true);
   }, []);
   
-  // Enhanced auto-scroll effect with momentum and easing
+  // Auto-scroll effect
   useEffect(() => {
     if (!scrollContainerRef.current || !isScrolling) return;
     
     const scrollContainer = scrollContainerRef.current;
-    const scrollWidth = scrollContainer.scrollWidth / 2;
+    const scrollWidth = scrollContainer.scrollWidth / 2; // Since we duplicated the videos
     let lastTimestamp = 0;
-    let scrollDirection = 1;
-    let velocity = 0;
-    const friction = 0.95; // Friction coefficient (0.9-0.99)
-    const acceleration = 0.2; // Acceleration rate
-    const maxSpeed = 10; // Maximum scroll speed
     
     const scrollStep = (timestamp: number) => {
-      if (!lastTimestamp) {
-        lastTimestamp = timestamp;
-        scrollAnimationRef.current = requestAnimationFrame(scrollStep);
-        return;
-      }
-      
-      const deltaTime = Math.min(timestamp - lastTimestamp, 100) / 16; // Cap delta time
+      if (!lastTimestamp) lastTimestamp = timestamp;
+      const deltaTime = timestamp - lastTimestamp;
       lastTimestamp = timestamp;
       
-      // Apply acceleration
-      velocity = Math.min(velocity + (acceleration * deltaTime * scrollDirection), maxSpeed);
+      // Calculate new scroll position
+      const newPosition = scrollContainer.scrollLeft + (scrollSpeed * deltaTime / 16);
       
-      // Calculate new position with momentum
-      const currentScroll = scrollContainer.scrollLeft;
-      let newPosition = currentScroll + (velocity * deltaTime);
-      
-      // Check boundaries and bounce
-      if (newPosition >= scrollWidth - scrollContainer.clientWidth) {
-        newPosition = scrollWidth - scrollContainer.clientWidth;
-        velocity = -velocity * 0.6; // Bounce effect
-        scrollDirection = -1;
-      } else if (newPosition <= 0) {
-        newPosition = 0;
-        velocity = -velocity * 0.6; // Bounce effect
-        scrollDirection = 1;
+      // Check if we've scrolled to the end or beginning
+      if (newPosition >= scrollWidth) {
+        scrollContainer.scrollLeft = newPosition - scrollWidth;
       } else {
-        // Apply friction when not at boundaries
-        velocity *= Math.pow(friction, deltaTime);
-        if (Math.abs(velocity) < 0.1) velocity = 0;
+        scrollContainer.scrollLeft = newPosition;
       }
       
-      // Apply smooth scrolling
-      scrollContainer.scrollTo({
-        left: newPosition,
-        behavior: 'smooth'
-      });
-      
-      if (isScrolling) {
-        scrollAnimationRef.current = requestAnimationFrame(scrollStep);
-      }
+      scrollAnimationRef.current = requestAnimationFrame(scrollStep);
     };
     
+    // Start scrolling
     scrollAnimationRef.current = requestAnimationFrame(scrollStep);
     
+    // Cleanup
     return () => {
       if (scrollAnimationRef.current) {
         cancelAnimationFrame(scrollAnimationRef.current);
       }
     };
   }, [isScrolling, scrollSpeed]);
-  
-  // Handle wheel events for smooth horizontal scrolling
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-    
-    const handleWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        container.scrollLeft += e.deltaY * 0.8; // Reduce scroll speed
-        e.preventDefault();
-      }
-    };
-    
-    container.addEventListener('wheel', handleWheel as EventListener, { passive: false } as AddEventListenerOptions);
-    return () => container.removeEventListener('wheel', handleWheel as EventListener);
-  }, []);
 
   // Handle time update
   const handleTimeUpdate = useCallback(() => {
@@ -561,83 +404,30 @@ const VideoSection: React.FC = () => {
         {/* Video Grid with Horizontal Scrolling */}
         <div 
           ref={scrollContainerRef}
-          className="flex items-center py-6 overflow-x-auto snap-x snap-mandatory touch-pan-x [&::-webkit-scrollbar]:hidden"
+          className="flex space-x-6 py-4 overflow-x-auto scroll-smooth"
           onMouseEnter={handleMouseEnter}
-          onMouseLeave={() => {
-            // Call the original handleMouseLeave if it exists
-            if (handleMouseLeave) handleMouseLeave();
-            // Update cursor style
-            const container = scrollContainerRef.current;
-            if (container) container.style.cursor = 'grab';
-          }}
+          onMouseLeave={handleMouseLeave}
           onScroll={handleScroll}
           style={{
+            ...scrollbarHide,
             WebkitOverflowScrolling: 'touch',
-            scrollSnapType: 'x mandatory',
-            msOverflowStyle: 'none',
-            scrollbarWidth: 'none',
-            scrollBehavior: 'smooth',
-            padding: '0 2rem', // Add padding for better scroll boundaries
-            margin: '0 -2rem', // Compensate for padding
-            cursor: 'grab',
-          }}
-          onMouseDown={() => {
-            const container = scrollContainerRef.current;
-            if (container) container.style.cursor = 'grabbing';
-          }}
-          onMouseUp={() => {
-            const container = scrollContainerRef.current;
-            if (container) container.style.cursor = 'grab';
           }}
         >
           {videos.map((video, index) => (
             <div
               key={`${video}-${index}`}
-              className="group relative flex-shrink-0 w-28 sm:w-36 md:w-40 lg:w-48 mx-2 cursor-pointer overflow-hidden rounded-lg bg-gray-900 snap-center"
-              style={{
-                aspectRatio: '9/16',
-                height: '280px',
-                maxHeight: '400px',
-                minHeight: '200px',
-                scrollSnapAlign: 'center',
-                scrollSnapStop: 'always',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                const element = e.currentTarget;
-                if (element) {
-                  element.style.transform = 'scale(1.02)';
-                  element.style.boxShadow = '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
-                }
-                handleVideoHover(index, true);
-              }}
-              onMouseLeave={(e) => {
-                const element = e.currentTarget;
-                if (element) {
-                  element.style.transform = 'scale(1)';
-                  element.style.boxShadow = 'none';
-                }
-                handleVideoHover(index, false);
-              }}
+              className="group relative aspect-video flex-shrink-0 w-64 md:w-80 lg:w-96 cursor-pointer overflow-hidden rounded-lg bg-gray-900"
+              onMouseEnter={() => handleVideoHover(index, true)}
+              onMouseLeave={() => handleVideoHover(index, false)}
               onClick={() => openFullscreen(video, index % (videos.length / 2))}
             >
               <video
-                ref={el => {
-                  if (el) {
-                    videoRefs.current[index] = el;
-                    // Auto-play the video when mounted
-                    el.play()
-                      .then(() => setIsPlaying(true))
-                      .catch(console.error);
-                  }
-                }}
+                ref={el => videoRefs.current[index] = el}
                 className="h-full w-full object-cover"
                 src={video}
                 muted
                 loop
                 playsInline
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
                 onLoadedData={handleVideoLoadedData}
               />
               
@@ -700,14 +490,10 @@ const VideoSection: React.FC = () => {
               onClick={e => e.stopPropagation()}
             >
               {/* Video Container */}
-              <div className="relative w-full h-full flex items-center justify-center bg-black">
+              <div className="relative h-full w-full">
                 <video
                   ref={fullscreenVideoRef}
-                  className="h-full max-h-[90vh] object-contain"
-                  style={{
-                    aspectRatio: '9/16',
-                    maxWidth: 'calc(90vh * 9/16)'
-                  }}
+                  className="h-full w-full"
                   src={currentVideo}
                   autoPlay
                   muted={isMuted}
