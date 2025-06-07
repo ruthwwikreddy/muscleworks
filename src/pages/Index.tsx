@@ -12,6 +12,7 @@ import GallerySection from "@/components/GallerySection";
 import BMICalculator from "@/components/BMICalculator";
 import BodyFatCalculator from "@/components/BodyFatCalculator";
 import CalorieCalculator from "@/components/CalorieCalculator";
+import VideoSection from "@/components/VideoSection";
 
 
 const Index = () => {
@@ -20,6 +21,7 @@ const Index = () => {
       <Navbar />
       <Hero />
       <TransformSection />
+      <VideoSection />
       <ServicesSection />
       <BMICalculator />
       <BodyFatCalculator />
